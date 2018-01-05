@@ -1,0 +1,66 @@
+--tipsArr为要显示的内容 逐条\n换行如截图
+function LuaCUIFunctionHelp.ShowFunctionHelp(tipsArr)
+    if #(tipsArr) == 0 then
+        return;
+    end
+    LuaCUIFunctionHelp.ShowUI();
+    --合成要输出的内容 逐条换行
+    local strCommonText = "";
+    local scrollText = m_gameObject.transform:FindChild("imgback/Viewport/Content/scroll");     --界面内容框
+    if (scrollText ~= nil) then
+        local textComponent = scrollText.gameObject:GetComponent("Text");
+        if textComponent ~= nil then
+            for i = 1,#(tipsArr) do
+                
+                strCommonText = strCommonText  .. tipsArr[i].. "\n";
+            end
+            
+            textComponent.text = strCommonText;
+        end
+    end
+    --设置提示框的长度
+    local m_nHeight = 0;
+    local m_nWidth = 0;
+    local scrollText = m_gameObject.transform:FindChild("imgback/Viewport/Content/scroll");
+    local rectScrollSize = scrollText.gameObject:GetComponent("Text").preferredHeight;
+    if rectScrollSize ~= nil then
+        rectScrollSizeHeight = rectScrollSize.preferredHeight;
+    end
+    if rectScrollSizeHeight <= 300 then
+        m_nHeight = rectScrollSizeHeight + 20;
+        m_nWidth = 290;
+    else
+        m_nHeight = 300;
+        m_nWidth = 290;
+    end
+    --设置背景高度和宽度
+    LuaCUIFunctionHelp.SetBackSize(m_nWidth,m_nHeight);
+    --设置帮助界面的坐标
+    local tipsRect = m_gameObject:GetComponent("RectTransform");
+    if(tipsRect ~= nil) then
+        tipsRect.sizeDelta = UnityEngine.Vector2.New( math.abs(m_nWidth), math.abs(m_nHeight));
+        local nPosX = 0;
+        if(UnityEngine.Input.mousePosition.x + tipsRect.rect.width + 30 >= UnityEngine.Screen.width) then
+            nPosX = UnityEngine.Input.mousePosition.x - 10;
+        else 
+            nPosX = UnityEngine.Input.mousePosition.x;
+        end
+        local nPosY = 0;
+        if(UnityEngine.Input.mousePosition.y - tipsRect.rect.height + 30 <= 0) then
+            nPosY = tipsRect.rect.height + 30;
+        else
+            nPosY = UnityEngine.Input.mousePosition.y - 10;
+        end
+        tipsRect.anchoredPosition = UnityEngine.Vector2.New(nPosX, nPosY);
+    end
+end
+--设置背景高度和宽度
+function LuaCUIFunctionHelp.SetBackSize(lWidth,lHeight)
+    local mBack = m_gameObject.transform:FindChild("imgback").gameObject;
+if(mBack ~= nil) then
+        local rectTransform = mBack.gameObject:GetComponent("RectTransform");
+        if(rectTransform ~= nil) then
+            rectTransform.sizeDelta = Vector2.New(lWidth, lHeight);
+        end
+    end
+end
